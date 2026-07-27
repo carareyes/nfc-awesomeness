@@ -1,4 +1,4 @@
-// app/sql-injection-demo.tsx - Route for SQL Injection Demo
+// app/sql-injection-demo.tsx 
 import SQLIDemoScreen from '@/components/SQLIDemoScreen';
 
 export default function SQLIDemo() {

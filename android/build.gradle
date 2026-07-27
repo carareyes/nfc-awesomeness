@@ -7,8 +7,13 @@ buildscript {
   }
   dependencies {
     classpath('com.android.tools.build:gradle')
+    
+     classpath('com.android.tools.build:gradle:8.7.2')  // Add specific version
+
     classpath('com.facebook.react:react-native-gradle-plugin')
     classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10')  // Add specific version
+
   }
 }
 

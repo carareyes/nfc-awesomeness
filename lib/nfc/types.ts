@@ -1,4 +1,4 @@
-// lib/nfc/types.ts - Cleaned TypeScript interfaces
+// lib/nfc/types.ts
 export type ParsedPayload = string;
 
 export interface NDEFRecord {

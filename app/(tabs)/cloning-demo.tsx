@@ -1,4 +1,4 @@
-// app/cloning-demo.tsx - Route for cloning demo
+// app/cloning-demo.tsx
 import CloningDemoScreen from '@/components/CloningDemoSreen';
 
 export default function CloningDemo() {

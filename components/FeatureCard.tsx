@@ -108,16 +108,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
               <Text style={styles.cardSubtitle}>{subtitle}</Text>
             </View>
 
-            <View style={styles.arrowContainer}>
-              <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.8)" />
-            </View>
           </View>
-
-          {disabled && (
-            <View style={styles.comingSoonBadge}>
-              <Text style={styles.comingSoonText}>Coming Soon</Text>
-            </View>
-          )}
         </LinearGradient>
       </TouchableOpacity>
     </Animated.View>

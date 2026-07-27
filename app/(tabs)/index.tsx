@@ -13,9 +13,9 @@ import {
 import * as Animatable from 'react-native-animatable';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FeatureCard } from '@/components/FeatureCard';
-import { TagAnalysisModal } from '@/components/TagAnalysisModal';
-import { nfcManager, NFCTagData } from '@/lib/nfc';
+import { nfcManager, NFCTagData } from '@/ios/lib/nfc';
 import { useRouter } from 'expo-router';
+import { TagAnalysis } from '@/components/TagAnalysis';
 
 export default function HomePage() {
   const [isScanning, setIsScanning] = useState(false);
@@ -50,10 +50,10 @@ export default function HomePage() {
       const initialized = await nfcManager.initialise();
       setNfcInitialized(initialized);
       if (!initialized) {
-        console.warn('NFC initialisation failed');
+        console.warn('init failed');
       }
     } catch (error) {
-      console.error('failed to initialise NFC:', error);
+      console.error('failed to initialise:', error);
     }
   };
 
@@ -76,7 +76,7 @@ export default function HomePage() {
       Alert.alert(
         'NFC Reader',
         'hold device near tag to scan',
-        [{ text: 'Cancel', onPress: () => setIsScanning(false) }]
+        [{ text: 'cancel', onPress: () => setIsScanning(false) }]
       );
       
       const tagData = await nfcManager.readNFCTag();
@@ -122,7 +122,7 @@ export default function HomePage() {
       `${i + 1}. ${record.payload || '(empty)'}`
     ).join('\n')}`;
       
-    Alert.alert('🔍 tag details', details);
+    Alert.alert('tag details', details);
   };
 
   const getSystemStatus = () => {
@@ -137,7 +137,6 @@ export default function HomePage() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#2c3e50" />
       
-      {/* Plain background instead of gradient and particles */}
       <View style={styles.plainBackground}>
         <ScrollView 
           style={styles.scrollView}
@@ -175,10 +174,9 @@ export default function HomePage() {
             </View>
           </Animated.View>
 
-          {/* Feature Cards */}
           <View style={styles.featuresContainer}>
             <FeatureCard
-              title={isScanning ? "🔄 scanning" : "READ NFC"}
+              title={isScanning ? "scanning" : "READ NFC"}
               subtitle={isScanning ? "analysing NFC tag" : "we love security"}
               icon={isScanning ? "refresh" : "shield-checkmark"}
               color={['#4facfe', '#00f2fe']}
@@ -234,8 +232,7 @@ export default function HomePage() {
           )}
         </ScrollView>
 
-        {/* Tag Analysis Modal */}
-        <TagAnalysisModal
+        <TagAnalysis
           visible={showTagAnalysis}
           tagData={lastScanResult}
           onClose={() => setShowTagAnalysis(false)}
@@ -251,7 +248,7 @@ const styles = StyleSheet.create({
   },
   plainBackground: {
     flex: 1,
-    backgroundColor: '#667eea', // Solid color matching your original gradient start
+    backgroundColor: '#667eea', 
   },
   scrollView: {
     flex: 1,
@@ -261,7 +258,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingTop: 40, // Increased from 20 since no logo taking space
+    paddingTop: 40,
     paddingHorizontal: 20,
     paddingBottom: 30,
   },

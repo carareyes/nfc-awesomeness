@@ -1,4 +1,4 @@
-// components/TagAnalysisModal.tsx - Updated with clean API
+// components/TagAnalysis.tsx
 import React, { useState } from 'react';
 import {
   Modal,
@@ -7,8 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
-  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,23 +20,11 @@ interface TagAnalysisModalProps {
   onClose: () => void;
 }
 
-export const TagAnalysisModal: React.FC<TagAnalysisModalProps> = ({
+export const TagAnalysis: React.FC<TagAnalysisModalProps> = ({
   visible,
   tagData,
   onClose,
 }) => {
-  const [isProtecting, setIsProtecting] = useState(false);
-  const [protectionStatus, setProtectionStatus] = useState<{
-    readProtection: boolean;
-    writeProtection: boolean;
-    cloningProtection: boolean;
-    backupCreated: boolean;
-  }>({
-    readProtection: false,
-    writeProtection: false,
-    cloningProtection: false,
-    backupCreated: false,
-  });
 
   if (!tagData) return null;
 
@@ -53,7 +39,7 @@ export const TagAnalysisModal: React.FC<TagAnalysisModalProps> = ({
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Ionicons name="close" size={24} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>NFC Tag Analysis</Text>
+          <Text style={styles.headerTitle}>Tag Analysis</Text>
           <View style={styles.headerSpacer} />
         </View>
 
@@ -71,10 +57,9 @@ export const TagAnalysisModal: React.FC<TagAnalysisModalProps> = ({
             </View>
           </Animatable.View>
 
-          {/* NDEF Data */}
           {tagData.ndefRecords.length > 0 && (
             <Animatable.View animation="fadeInUp" delay={400} style={styles.infoCard}>
-              <Text style={styles.cardTitle}>📄 NDEF Records</Text>
+              <Text style={styles.cardTitle}>NDEF Records</Text>
               {tagData.ndefRecords.map((record, index) => (
                 <View key={index} style={styles.recordCard}>
                   <Text style={styles.recordTitle}>Record {index + 1}</Text>
@@ -87,7 +72,6 @@ export const TagAnalysisModal: React.FC<TagAnalysisModalProps> = ({
             </Animatable.View>
           )}
 
-        
         </ScrollView>
       </LinearGradient>
     </Modal>

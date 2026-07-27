@@ -1,4 +1,4 @@
-// lib/nfc/simple-secure-manager.ts - Works with your existing security-manager
+// lib/nfc/simple-secure-manager.ts
 
 import * as Crypto from 'expo-crypto';
 import { nfcManager } from './index';
@@ -17,15 +17,11 @@ export class SimpleSecureNFCManager {
     try {
       console.log('creating secure tag');
       
-
       const timestamp = Date.now();
       const nonce = Math.random().toString(36).substring(2, 8);
-      
       const truncatedData = data.length > 50 ? data.substring(0, 50) + '...' : data;
-      
       const payload = `${truncatedData}|T:${timestamp}|N:${nonce}`;
       
-      // sign the payload (creates 64-character hash)
       const signature = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         payload + this.privateKey
@@ -60,9 +56,9 @@ export class SimpleSecureNFCManager {
       
       const tagData = await nfcManager.readNFCTag();
       
-      console.log('tag read:', tagData);
+      console.log('result:', tagData);
       
-      const threatReport = await this.securityManager.performThreatDetection(tagData);
+      const threatReport = await nfcManager.checkThreatDetection(tagData);
       
       let isValid = false;
       let isExpired = false;
@@ -71,7 +67,7 @@ export class SimpleSecureNFCManager {
       
       for (const record of tagData.ndefRecords) {
         if (record.payload && record.payload.includes('S:')) {
-          console.log('verifying signature');
+          console.log('verifying');
           
           const verification = await this.verifySignature(record.payload);
           isValid = verification.isValid;
@@ -81,7 +77,7 @@ export class SimpleSecureNFCManager {
             events.push({
               type: 'SIGNATURE_INVALID',
               severity: 'HIGH',
-              description: 'invalid cryptographic signature detected',
+              description: 'invalid cryptographic signature',
               tagId: tagData.id,
               timestamp: Date.now(),
               blocked: true
@@ -121,6 +117,7 @@ export class SimpleSecureNFCManager {
       const accessGranted = isValid && !isExpired && !shouldBlock;
       
       console.log(`access: ${accessGranted ? 'GRANTED' : 'DENIED'}`);
+      console.log('security events:', events.length);
 
       return {
         tagData,
@@ -173,7 +170,7 @@ export class SimpleSecureNFCManager {
       return { isValid, isExpired };
       
     } catch (error) {
-      console.error('signature verification failed:', error);
+      console.error('signature invalid:', error);
       return { isValid: false, isExpired: false };
     }
   }
@@ -184,7 +181,7 @@ export class SimpleSecureNFCManager {
     behavioralDetection: boolean;
   }> {
     try {
-      console.log('demo');
+      console.log('start demo');
 
       await nfcManager.writeNFCTag(['ACCESS:ADMIN|USER:VulnerableUser']);
       const vulnerableTag = await nfcManager.readNFCTag();
@@ -194,14 +191,7 @@ export class SimpleSecureNFCManager {
       const secureRead = await this.readSecureTag();
       const secureClone = secureRead.accessGranted;
 
-      let behavioralDetection = false;
-      for (let i = 0; i < 6; i++) {
-        const testRead = await this.readSecureTag();
-        if (testRead.securityResult.shouldBlock) {
-          behavioralDetection = true;
-          break;
-        }
-      }
+      const behavioralDetection = false;
       
       return {
         vulnerableClone,
@@ -210,7 +200,7 @@ export class SimpleSecureNFCManager {
       };
       
     } catch (error) {
-      console.error('demonstration failed:', error);
+      console.error('demo failed:', error);
       throw error;
     }
   }

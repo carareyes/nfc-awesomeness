@@ -1,46 +1,42 @@
-// lib/nfc/security-manager.ts
-import { NFCTagData, ThreatReport } from './types';
+// // lib/nfc/security-manager.ts
 
-export class SecurityManager {
-  private threatDetectionEnabled = true;
-  private readAttempts: Map<string, number> = new Map();
+// import { NFCTagData, ThreatReport } from './types';
 
-  enableThreatDetection(enabled: boolean): void {
-    this.threatDetectionEnabled = enabled;
-  }
+// export class SecurityManager {
+//   private threatDetectionEnabled = true;
 
-  async performThreatDetection(tagData: NFCTagData): Promise<ThreatReport | null> {
-    if (!this.threatDetectionEnabled) {
-      return null;
-    }
+//   enableThreatDetection(enabled: boolean): void {
+//     this.threatDetectionEnabled = enabled;
+//   }
 
-    const currentAttempts = this.readAttempts.get(tagData.id) || 0;
-    this.readAttempts.set(tagData.id, currentAttempts + 1);
+//   async performThreatDetection(tagData: NFCTagData): Promise<ThreatReport | null> {
+//     if (!this.threatDetectionEnabled) {
+//       return null;
+//     }
 
-    if (currentAttempts > 5) {
-      return {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        threatType: 'CLONING_ATTEMPT',
-        severity: 'HIGH',
-        description: `multiple rapid read attempts detected ${tagData.id.substring(0, 8)}...`,
-        tagId: tagData.id,
-        blocked: true
-      };
-    }
+//     const hasErrorRecords = tagData.ndefRecords.some(record => 
+//       !record.payload || record.payload.includes('error') || record.payload.includes('malformed')
+//     );
 
-    const hasErrorRecords = tagData.ndefRecords.some(record => 
-      !record.payload || record.payload.includes('error') || record.payload.includes('error')
-    );
+//     if (hasErrorRecords) {
+//       return {
+//         id: Date.now().toString(),
+//         timestamp: new Date().toISOString(),
+//         threatType: 'SUSPICIOUS_PATTERN',
+//         severity: 'MEDIUM',
+//         description: 'tag contains suspicious content',
+//         tagId: tagData.id,
+//         blocked: false
+//       };
+//     }
 
-    return null;
-  }
+//     return null;
+//   }
 
-  getReadAttempts(tagId: string): number {
-    return this.readAttempts.get(tagId) || 0;
-  }
+//   getReadAttempts(tagId: string): number {
+//     return 0;
+//   }
 
-  resetReadAttempts(): void {
-    this.readAttempts.clear();
-  }
-}
+//   resetReadAttempts(): void {
+//   }
+// }

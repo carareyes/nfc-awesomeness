@@ -1,4 +1,4 @@
-// components/SQLInjectionDemoScreen.tsx - NFC to SQL Injection Demo
+// components/SQLIDemoScreen.tsx
 
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet, ScrollView } from 'react-native';
@@ -63,7 +63,7 @@ const SQLInjectionDemoScreen = () => {
         [{ text: 'cancel', onPress: () => setIsLoading(false) }]
       );
 
-      // Write the malicious payload to NFC tag
+      // write malicious payload
       await nfcManager.writeNFCTag([
         `USER_ID:${payload}`,
         `ACCESS_LEVEL:admin`,
@@ -76,7 +76,7 @@ const SQLInjectionDemoScreen = () => {
       Alert.alert(
         'step 1 complete', 
         `malicious tag created!\n\n` +
-        `Payload: ${payload}\n\n` +
+        `payload: ${payload}\n\n` +
         `this tag contains SQLi code`,
         [{ text: 'next: test on vulnerable database' }]
       );
@@ -177,7 +177,7 @@ const SQLInjectionDemoScreen = () => {
       setSecureResult({
         success: secureResult.success,
         blocked: secureResult.blocked,
-        sanitized: secureResult.sanitizedInput,
+        sanitised: secureResult.sanitisedInput,
         query: secureResult.executedQuery,
         message: secureResult.message,
         securityEvents: secureResult.securityEvents,
@@ -190,9 +190,9 @@ const SQLInjectionDemoScreen = () => {
         secureResult.blocked ? 'step 3 complete' : 'complete',
         secureResult.blocked 
           ? `attack blocked!!\n\n` +
-            `Access: ${secureResult.success ? 'GRANTED' : 'DENIED'}\n` +
-            `Input Sanitized: ${secureResult.sanitizedInput}\n` +
-            `Security Events: ${secureResult.securityEvents?.length || 0}\n\n` +
+            `access: ${secureResult.success ? 'GRANTED' : 'DENIED'}\n` +
+            `input sanitised: ${secureResult.sanitisedInput}\n` +
+            `security events: ${secureResult.securityEvents?.length || 0}\n\n` +
             `parameterised queries prevented SQLi`
           : `secure system processed request safely.\n\n${secureResult.message}`,
         [{ text: 'next: results' }]
@@ -223,7 +223,7 @@ const SQLInjectionDemoScreen = () => {
         },
         secureSystem: {
             blocked: secureResult.blocked,
-            sanitized: secureResult.sanitized,
+            sanitised: secureResult.sanitised,
             accessGranted: secureResult.success,
             securityEvents: secureResult.securityEvents?.length || 0
         },
@@ -235,15 +235,15 @@ const SQLInjectionDemoScreen = () => {
       
       Alert.alert(
         'step 4 complete - comparing secure and vulnerable results',
-        `Original Payload: ${nfcPayload}\n\n` +
+        `original payload: ${nfcPayload}\n\n` +
         `VULNERABLE SYSTEM:\n` +
-        `• Exploited: ${vulnerableResult.exploited ? 'YES' : 'NO'}\n` +
-        `• Data Leaked: ${vulnerableResult.data?.length || 0} records\n` +
-        `• Access: ${vulnerableResult.success ? 'GRANTED' : 'DENIED'}\n\n` +
+        `• exploited: ${vulnerableResult.exploited ? 'YES' : 'NO'}\n` +
+        `• data leaked: ${vulnerableResult.data?.length || 0} records\n` +
+        `• access: ${vulnerableResult.success ? 'GRANTED' : 'DENIED'}\n\n` +
         `SECURE SYSTEM:\n` +
-        `• Blocked: ${secureResult.blocked ? 'YES' : 'NO'}\n` +
-        `• Input Sanitized: ${secureResult.sanitized || 'N/A'}\n` +
-        `• Security Events: ${secureResult.securityEvents?.length || 0}\n\n` +
+        `• blocked: ${secureResult.blocked ? 'YES' : 'NO'}\n` +
+        `• input sanitised: ${secureResult.sanitised || 'N/A'}\n` +
+        `• security events: ${secureResult.securityEvents?.length || 0}\n\n` +
         `Result: ${vulnerableResult.exploited && secureResult.blocked ? 
           'demo success' : 
           'some error'}`,
@@ -307,11 +307,10 @@ const SQLInjectionDemoScreen = () => {
       setSecureResult(null);
       setDemoResults(null);
       
-      // Reset backend databases
       await vulnerableBackend.resetDatabase();
       await secureBackend.resetDatabase();
       
-      Alert.alert('🔄 demo reset');
+      Alert.alert('demo reset');
     } catch (error: any) {
       Alert.alert('reset error', `failed to reset: ${error.message}`);
     }
@@ -339,7 +338,6 @@ const SQLInjectionDemoScreen = () => {
         shows how malicious NFC tags can exploit vulnerable database systems
       </Text>
 
-      {/* Danger Level Indicator */}
       {demoResults && (
         <View style={[styles.dangerIndicator, { backgroundColor: dangerColors[dangerLevel] }]}>
           <Text style={styles.dangerText}>
@@ -348,7 +346,6 @@ const SQLInjectionDemoScreen = () => {
         </View>
       )}
 
-      {/* Step 1: Create Malicious NFC Tag */}
       <View style={[styles.stepContainer, currentStep === 1 && styles.activeStep]}>
         <Text style={styles.stepTitle}>
           step 1: create malicious tag
@@ -359,15 +356,15 @@ const SQLInjectionDemoScreen = () => {
         
         {nfcPayload && (
           <View style={styles.dataContainer}>
-            <Text style={styles.dataTitle}>🦠 malicious payload created:</Text>
+            <Text style={styles.dataTitle}>malicious payload created:</Text>
             <Text style={[styles.dataText, styles.dangerousText]}>
-              Payload: {nfcPayload}
+              payload: {nfcPayload}
             </Text>
             <Text style={styles.dataText}>
-              Vector: SQLi via NFC USER_ID field
+              vector: SQLi in USER_ID field
             </Text>
             <Text style={styles.dataText}>
-              Target: backend authentication system
+              target: authentication system
             </Text>
           </View>
         )}
@@ -383,7 +380,6 @@ const SQLInjectionDemoScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Step 2: Test Vulnerable System */}
       <View style={[styles.stepContainer, currentStep === 2 && styles.activeStep]}>
         <Text style={styles.stepTitle}>
           step 2: attack vulnerable DB
@@ -415,7 +411,7 @@ const SQLInjectionDemoScreen = () => {
             {vulnerableResult.exploited && (
               <>
                 <Text style={[styles.dataText, styles.dangerousText]}>
-                  SQLi successful! database compromised!
+                  SQLi successful! database compromised!!
                 </Text>
                 {vulnerableResult.data && vulnerableResult.data.length > 0 && (
                   <TouchableOpacity 
@@ -443,7 +439,6 @@ const SQLInjectionDemoScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Step 3: Test Secure System */}
       <View style={[styles.stepContainer, currentStep === 3 && styles.activeStep]}>
         <Text style={styles.stepTitle}>
           step 3: test secure DB
@@ -454,7 +449,7 @@ const SQLInjectionDemoScreen = () => {
         
         {secureResult && (
           <View style={styles.dataContainer}>
-            <Text style={styles.dataTitle}>🔒 Secure System Response:</Text>
+            <Text style={styles.dataTitle}>secure system:</Text>
             <Text style={[
               styles.dataText, 
               secureResult.blocked ? styles.secureText : styles.normalText
@@ -465,7 +460,7 @@ const SQLInjectionDemoScreen = () => {
               access: {secureResult.success ? 'GRANTED' : 'DENIED'}
             </Text>
             <Text style={styles.dataText}>
-              input sanitized: {secureResult.sanitized || 'N/A'}
+              input sanitised: {secureResult.sanitised || 'N/A'}
             </Text>
             <Text style={styles.dataText}>
               security events: {secureResult.securityEvents?.length || 0}
@@ -492,13 +487,12 @@ const SQLInjectionDemoScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Step 4: Compare Results */}
       <View style={[styles.stepContainer, currentStep === 4 && styles.activeStep]}>
         <Text style={styles.stepTitle}>
           step 4: compare results
         </Text>
         <Text style={styles.stepDescription}>
-          sompare step 2 and 3 results
+          compare step 2 and 3 results
         </Text>
         
         {demoResults && (
@@ -516,12 +510,12 @@ const SQLInjectionDemoScreen = () => {
               • access granted: {demoResults.vulnerableSystem.accessGranted ? 'YES' : 'NO'}
             </Text>
             
-            <Text style={styles.sectionTitle}>🔒 Secure System:</Text>
+            <Text style={styles.sectionTitle}>secure system:</Text>
             <Text style={[styles.dataText, demoResults.secureSystem.blocked ? styles.secureText : styles.normalText]}>
               • attack blocked: {demoResults.secureSystem.blocked ? 'YES' : 'NO'}
             </Text>
             <Text style={styles.dataText}>
-              • input sanitised: {demoResults.secureSystem.sanitized || 'N/A'}
+              • input sanitised: {demoResults.secureSystem.sanitised || 'N/A'}
             </Text>
             <Text style={styles.dataText}>
               • security events: {demoResults.secureSystem.securityEvents}
@@ -545,7 +539,7 @@ const SQLInjectionDemoScreen = () => {
       </TouchableOpacity>
 
       <View style={styles.infoContainer}>
-        <Text style={styles.infoTitle}>SQLi Prevention Methods</Text>
+        <Text style={styles.infoTitle}>prevention methods</Text>
         <Text style={styles.infoText}>
           <Text style={styles.boldText}>1. parameterised queries:</Text> use statements with parameters
         </Text>

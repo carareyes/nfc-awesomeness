@@ -1,10 +1,8 @@
-// lib/nfc/index.ts - Simplified NFC Manager for Cloning & SQL Injection Demos
-
+// lib/nfc/index.ts 
 import NfcManager, { NfcTech, TagEvent } from 'react-native-nfc-manager';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 import { NFCTagData, NDEFRecord, ThreatReport } from './nfc/types.js';
-
 
 class NFCManager {
   private isInitialized = false;
@@ -134,7 +132,6 @@ class NFCManager {
         await NfcManager.requestTechnology([NfcTech.Ndef]);
       }
 
-      // NDEF message bytes
       const ndefMessageBytes: number[] = [];
       
       textData.forEach((text, index) => {
@@ -142,13 +139,11 @@ class NFCManager {
         const langCodeBytes = new TextEncoder().encode(langCode);
         const textBytes = new TextEncoder().encode(text);
         
-        // text record payload: [status byte][lang code][text]
         const payload = new Uint8Array(1 + langCodeBytes.length + textBytes.length);
         payload[0] = langCodeBytes.length;
         payload.set(langCodeBytes, 1);
         payload.set(textBytes, 1 + langCodeBytes.length);
 
-        // create NDEF record header
         let flags = 0x01;
         if (index === 0) flags |= 0x80; 
         if (index === textData.length - 1) flags |= 0x40; 
@@ -239,7 +234,7 @@ class NFCManager {
       
       return String(payload);
     } catch (error) {
-      return 'Unable to parse payload';
+      return 'cannot parse payload';
     }
   }
 
